@@ -47,6 +47,8 @@ function wp_floating_cta_sanitize( mixed $input ): array {
         'border_radius', 'font_size', 'padding_v', 'padding_h',
         'bottom_offset', 'max_width', 'micro_top_size', 'micro_bottom_size',
         'bg_padding_v', 'bg_padding_h',
+        'mobile_font_size', 'mobile_padding_v', 'mobile_padding_h',
+        'mobile_bg_padding_v', 'mobile_bg_padding_h',
     ];
     foreach ( $int_fields as $field ) {
         $out[ $field ] = (string) absint( $input[ $field ] ?? $defaults[ $field ] );
@@ -306,6 +308,39 @@ function wp_floating_cta_settings_page(): void {
                         </table>
                     </div>
 
+                    <!-- モバイル設定 -->
+                    <div class="fcta-section">
+                        <h2>📱 モバイル設定 <span style="font-size:12px;font-weight:normal;color:#666;">（〜767px に適用）</span></h2>
+                        <p class="description">PC設定を引き継ぐ項目は空欄 (0) にしてください。</p>
+                        <table class="form-table" role="presentation">
+                            <tr>
+                                <th scope="row">フォントサイズ</th>
+                                <td>
+                                    <input type="number" name="<?php echo $opt; ?>[mobile_font_size]"
+                                           value="<?php echo esc_attr( $s['mobile_font_size'] ); ?>"
+                                           min="0" max="36" style="width:80px;"> px
+                                    <span class="description">（0 = PC設定と同じ）</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">ボタン内側余白</th>
+                                <td style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                                    <label>上下 <input type="number" name="<?php echo $opt; ?>[mobile_padding_v]" value="<?php echo esc_attr( $s['mobile_padding_v'] ); ?>" min="0" max="60" style="width:65px;"> px</label>
+                                    <label>左右 <input type="number" name="<?php echo $opt; ?>[mobile_padding_h]" value="<?php echo esc_attr( $s['mobile_padding_h'] ); ?>" min="0" max="120" style="width:65px;"> px</label>
+                                    <span class="description">（0 = PC設定と同じ）</span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">パネル内側余白</th>
+                                <td style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                                    <label>上下 <input type="number" name="<?php echo $opt; ?>[mobile_bg_padding_v]" value="<?php echo esc_attr( $s['mobile_bg_padding_v'] ); ?>" min="0" max="60" style="width:65px;"> px</label>
+                                    <label>左右 <input type="number" name="<?php echo $opt; ?>[mobile_bg_padding_h]" value="<?php echo esc_attr( $s['mobile_bg_padding_h'] ); ?>" min="0" max="80" style="width:65px;"> px</label>
+                                    <span class="description">（0 = PC設定と同じ）</span>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+
                     <!-- 位置・表示設定 -->
                     <div class="fcta-section" id="fcta-position-section">
                         <h2>位置・表示設定</h2>
@@ -356,7 +391,13 @@ function wp_floating_cta_settings_page(): void {
                 <div class="fcta-preview-col">
                     <div class="fcta-section">
                         <h2>👁 ライブプレビュー</h2>
-                        <p class="description" style="margin-bottom:12px;">設定変更がリアルタイムで反映されます。</p>
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                            <p class="description" style="margin:0;">設定変更がリアルタイムで反映されます。</p>
+                            <label style="cursor:pointer;user-select:none;font-size:12px;">
+                                <input type="checkbox" id="fcta-mobile-toggle" style="margin-right:3px;">
+                                📱 スマホ表示
+                            </label>
+                        </div>
                         <div id="fcta-preview-frame">
                             <div id="fcta-preview-widget"
                                  class="<?php echo esc_attr( ( $s['shadow'] ? 'fcta-shadow' : '' ) . ( $s['full_width'] ? ' fcta-fullwidth' : '' ) ); ?>"

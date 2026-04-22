@@ -19,15 +19,25 @@
         var closeEl = widget ? widget.querySelector( '.fcta-close' ) : null;
         if ( ! widget || ! btn ) return;
 
-        /* ── ボタンスタイル ── */
-        btn.style.backgroundColor = field( 'bg_color' )     || '#ff6b35';
-        btn.style.color            = field( 'text_color' )   || '#ffffff';
-        btn.style.borderRadius     = ( field( 'border_radius' ) || '8' )  + 'px';
-        btn.style.fontSize         = ( field( 'font_size' )     || '18' ) + 'px';
-        btn.style.padding          =
-            ( field( 'padding_v' ) || '16' ) + 'px ' +
-            ( field( 'padding_h' ) || '32' ) + 'px';
-        btn.textContent = field( 'button_text' ) || '（テキスト未入力）';
+        /* ── ボタンスタイル（モバイル切り替え対応） ── */
+        btn.style.backgroundColor = field( 'bg_color' )   || '#ff6b35';
+        btn.style.color            = field( 'text_color' ) || '#ffffff';
+        btn.style.borderRadius     = ( field( 'border_radius' ) || '8' ) + 'px';
+
+        var fs  = field( 'font_size' )  || '18';
+        var mpv = field( 'padding_v' )  || '16';
+        var mph = field( 'padding_h' )  || '32';
+        if ( isMobile ) {
+            var mfs = field( 'mobile_font_size' );
+            var mmv = field( 'mobile_padding_v' );
+            var mmh = field( 'mobile_padding_h' );
+            if ( parseInt( mfs ) > 0 ) fs  = mfs;
+            if ( parseInt( mmv ) > 0 ) mpv = mmv;
+            if ( parseInt( mmh ) > 0 ) mph = mmh;
+        }
+        btn.style.fontSize = fs + 'px';
+        btn.style.padding  = mpv + 'px ' + mph + 'px';
+        btn.textContent    = field( 'button_text' ) || '（テキスト未入力）';
 
         /* ── ボタン常時アニメーション ── */
         [ 'fcta-btn-float', 'fcta-btn-shine', 'fcta-btn-pulse' ].forEach( function ( c ) {
@@ -38,9 +48,15 @@
             btn.classList.add( 'fcta-btn-' + btnAnim );
         }
 
-        /* ── パネル余白 ── */
+        /* ── パネル余白（モバイル切り替え対応） ── */
         var bpv = field( 'bg_padding_v' ) || '12';
         var bph = field( 'bg_padding_h' ) || '16';
+        if ( isMobile ) {
+            var mbpv = field( 'mobile_bg_padding_v' );
+            var mbph = field( 'mobile_bg_padding_h' );
+            if ( parseInt( mbpv ) > 0 ) bpv = mbpv;
+            if ( parseInt( mbph ) > 0 ) bph = mbph;
+        }
         widget.style.padding = bpv + 'px ' + bph + 'px';
 
         /* ── フルワイド ── */
@@ -81,11 +97,33 @@
         }
     }
 
+    var isMobile = false;
+
+    /* ── スマホ切り替えトグル ── */
+    function initMobileToggle() {
+        var toggle = document.getElementById( 'fcta-mobile-toggle' );
+        var frame  = document.getElementById( 'fcta-preview-frame' );
+        if ( ! toggle || ! frame ) return;
+
+        toggle.addEventListener( 'change', function () {
+            isMobile = toggle.checked;
+            if ( isMobile ) {
+                frame.style.maxWidth = '390px';
+                frame.style.margin   = '0 auto';
+            } else {
+                frame.style.maxWidth = '';
+                frame.style.margin   = '';
+            }
+            updatePreview();
+        } );
+    }
+
     document.addEventListener( 'DOMContentLoaded', function () {
         var form = document.querySelector( 'form' );
         if ( ! form ) return;
         form.addEventListener( 'input',  updatePreview );
         form.addEventListener( 'change', updatePreview );
+        initMobileToggle();
         updatePreview();
     } );
 } )();

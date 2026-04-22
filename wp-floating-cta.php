@@ -70,6 +70,11 @@ function wp_floating_cta_defaults(): array {
         'bg_padding_v'         => '12',
         'bg_padding_h'         => '16',
         'full_width'           => '',
+        'mobile_font_size'     => '16',
+        'mobile_padding_v'     => '14',
+        'mobile_padding_h'     => '20',
+        'mobile_bg_padding_v'  => '10',
+        'mobile_bg_padding_h'  => '12',
         'micro_top_color'      => '#333333',
         'micro_top_size'       => '13',
         'micro_bottom_color'   => '#666666',
@@ -108,6 +113,42 @@ function wp_floating_cta_enqueue(): void {
         WP_FLOATING_CTA_VERSION,
         true
     );
+
+    // モバイル上書き CSS をインラインで追加
+    $mobile_css = wp_floating_cta_mobile_css( $settings );
+    if ( $mobile_css ) {
+        wp_add_inline_style( 'wp-floating-cta', $mobile_css );
+    }
+}
+
+function wp_floating_cta_mobile_css( array $s ): string {
+    $btn_rules  = [];
+    $wrap_rules = [];
+
+    $mfs  = (int) ( $s['mobile_font_size']    ?? 0 );
+    $mpv  = (int) ( $s['mobile_padding_v']    ?? 0 );
+    $mph  = (int) ( $s['mobile_padding_h']    ?? 0 );
+    $mbpv = (int) ( $s['mobile_bg_padding_v'] ?? 0 );
+    $mbph = (int) ( $s['mobile_bg_padding_h'] ?? 0 );
+
+    if ( $mfs > 0 ) {
+        $btn_rules[] = "font-size:{$mfs}px";
+    }
+    if ( $mpv > 0 || $mph > 0 ) {
+        $btn_rules[] = "padding:{$mpv}px {$mph}px";
+    }
+    if ( $mbpv > 0 || $mbph > 0 ) {
+        $wrap_rules[] = "padding:{$mbpv}px {$mbph}px";
+    }
+
+    $css = '';
+    if ( $btn_rules ) {
+        $css .= '@media(max-width:767px){#wp-floating-cta .fcta-btn{' . implode( ';', $btn_rules ) . '!important;}}';
+    }
+    if ( $wrap_rules ) {
+        $css .= '@media(max-width:767px){#wp-floating-cta{' . implode( ';', $wrap_rules ) . '!important;}}';
+    }
+    return $css;
 }
 
 add_action( 'wp_footer', 'wp_floating_cta_render' );
