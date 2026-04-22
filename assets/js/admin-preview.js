@@ -2,7 +2,8 @@
 ( function () {
     'use strict';
 
-    var OPT = 'wp_floating_cta_settings';
+    var OPT     = 'wp_floating_cta_settings';
+    var isMobile = false;
 
     function field( key ) {
         var el = document.querySelector( '[name="' + OPT + '[' + key + ']"]' );
@@ -19,7 +20,17 @@
         var closeEl = widget ? widget.querySelector( '.fcta-close' ) : null;
         if ( ! widget || ! btn ) return;
 
-        /* ── ボタンスタイル（モバイル切り替え対応） ── */
+        /* ── ウィジェット最大幅（PCモード時は設定に従う） ── */
+        var fullW = field( 'full_width' );
+        if ( fullW ) {
+            widget.classList.add( 'fcta-fullwidth' );
+            widget.style.maxWidth = '100%';
+        } else {
+            widget.classList.remove( 'fcta-fullwidth' );
+            widget.style.maxWidth = isMobile ? '100%' : ( ( field( 'max_width' ) || '480' ) + 'px' );
+        }
+
+        /* ── ボタンスタイル（PC / モバイル切り替え対応） ── */
         btn.style.backgroundColor = field( 'bg_color' )   || '#ff6b35';
         btn.style.color            = field( 'text_color' ) || '#ffffff';
         btn.style.borderRadius     = ( field( 'border_radius' ) || '8' ) + 'px';
@@ -38,6 +49,13 @@
         btn.style.fontSize = fs + 'px';
         btn.style.padding  = mpv + 'px ' + mph + 'px';
         btn.textContent    = field( 'button_text' ) || '（テキスト未入力）';
+
+        /* ── 立体ボタン ── */
+        if ( field( 'button_3d' ) ) {
+            btn.classList.add( 'fcta-btn-3d' );
+        } else {
+            btn.classList.remove( 'fcta-btn-3d' );
+        }
 
         /* ── ボタン常時アニメーション ── */
         [ 'fcta-btn-float', 'fcta-btn-shine', 'fcta-btn-pulse' ].forEach( function ( c ) {
@@ -59,13 +77,6 @@
         }
         widget.style.padding = bpv + 'px ' + bph + 'px';
 
-        /* ── フルワイド ── */
-        if ( field( 'full_width' ) ) {
-            widget.classList.add( 'fcta-fullwidth' );
-        } else {
-            widget.classList.remove( 'fcta-fullwidth' );
-        }
-
         /* ── シャドウ ── */
         if ( field( 'shadow' ) ) {
             widget.classList.add( 'fcta-shadow' );
@@ -81,41 +92,47 @@
         /* ── マイクロコピー 上 ── */
         if ( mTop ) {
             var topText = field( 'micro_copy_top' );
-            mTop.textContent  = topText;
-            mTop.style.color     = field( 'micro_top_color' ) || '#333';
-            mTop.style.fontSize  = ( field( 'micro_top_size' ) || '13' ) + 'px';
-            mTop.style.display   = topText.trim() ? '' : 'none';
+            mTop.textContent = topText;
+            mTop.style.color    = field( 'micro_top_color' ) || '#333';
+            mTop.style.fontSize = ( field( 'micro_top_size' ) || '13' ) + 'px';
+            mTop.style.display  = topText.trim() ? '' : 'none';
         }
 
         /* ── マイクロコピー 下 ── */
         if ( mBot ) {
             var botText = field( 'micro_copy_bottom' );
-            mBot.textContent  = botText;
-            mBot.style.color     = field( 'micro_bottom_color' ) || '#666';
-            mBot.style.fontSize  = ( field( 'micro_bottom_size' ) || '12' ) + 'px';
-            mBot.style.display   = botText.trim() ? '' : 'none';
+            mBot.textContent = botText;
+            mBot.style.color    = field( 'micro_bottom_color' ) || '#666';
+            mBot.style.fontSize = ( field( 'micro_bottom_size' ) || '12' ) + 'px';
+            mBot.style.display  = botText.trim() ? '' : 'none';
         }
     }
 
-    var isMobile = false;
+    /* ── PC / スマホ トグル ── */
+    function initViewToggle() {
+        var btnPc   = document.getElementById( 'fcta-view-pc' );
+        var btnSp   = document.getElementById( 'fcta-view-sp' );
+        var frame   = document.getElementById( 'fcta-preview-frame' );
+        if ( ! btnPc || ! btnSp || ! frame ) return;
 
-    /* ── スマホ切り替えトグル ── */
-    function initMobileToggle() {
-        var toggle = document.getElementById( 'fcta-mobile-toggle' );
-        var frame  = document.getElementById( 'fcta-preview-frame' );
-        if ( ! toggle || ! frame ) return;
-
-        toggle.addEventListener( 'change', function () {
-            isMobile = toggle.checked;
-            if ( isMobile ) {
-                frame.style.maxWidth = '390px';
-                frame.style.margin   = '0 auto';
-            } else {
-                frame.style.maxWidth = '';
-                frame.style.margin   = '';
-            }
+        function setPC() {
+            isMobile = false;
+            frame.style.maxWidth = '';
+            frame.style.margin   = '';
+            btnPc.classList.add( 'button-primary' );
+            btnSp.classList.remove( 'button-primary' );
             updatePreview();
-        } );
+        }
+        function setSP() {
+            isMobile = true;
+            frame.style.maxWidth = '390px';
+            frame.style.margin   = '0 auto';
+            btnPc.classList.remove( 'button-primary' );
+            btnSp.classList.add( 'button-primary' );
+            updatePreview();
+        }
+        btnPc.addEventListener( 'click', setPC );
+        btnSp.addEventListener( 'click', setSP );
     }
 
     document.addEventListener( 'DOMContentLoaded', function () {
@@ -123,7 +140,7 @@
         if ( ! form ) return;
         form.addEventListener( 'input',  updatePreview );
         form.addEventListener( 'change', updatePreview );
-        initMobileToggle();
+        initViewToggle();
         updatePreview();
     } );
 } )();

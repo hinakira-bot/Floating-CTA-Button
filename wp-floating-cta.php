@@ -67,6 +67,7 @@ function wp_floating_cta_defaults(): array {
         'shadow'               => '1',
         'animation'            => 'slide',
         'button_animation'     => 'shine',
+        'button_3d'            => '1',
         'bg_padding_v'         => '12',
         'bg_padding_h'         => '16',
         'full_width'           => '',
@@ -197,6 +198,7 @@ function wp_floating_cta_render(): void {
     $btn_anim        = in_array( $s['button_animation'] ?? 'none', $valid_btn_anims, true )
                            ? $s['button_animation'] : 'none';
     $btn_anim_class  = ( $btn_anim !== 'none' ) ? ' fcta-btn-' . esc_attr( $btn_anim ) : '';
+    $btn_3d_class    = ! empty( $s['button_3d'] ) ? ' fcta-btn-3d' : '';
 
     $full_width      = ! empty( $s['full_width'] );
     $fullwidth_class = $full_width ? ' fcta-fullwidth' : '';
@@ -229,7 +231,7 @@ function wp_floating_cta_render(): void {
 
         <a href="<?php echo esc_url( $s['button_url'] ); ?>"
            target="<?php echo esc_attr( $target ); ?>"<?php echo $rel; ?>
-           class="fcta-btn<?php echo esc_attr( $btn_anim_class ); ?>"
+           class="fcta-btn<?php echo esc_attr( $btn_anim_class . $btn_3d_class ); ?>"
            style="<?php echo esc_attr( $btn_style ); ?>">
             <?php echo wp_kses_post( $s['button_text'] ); ?>
         </a>
