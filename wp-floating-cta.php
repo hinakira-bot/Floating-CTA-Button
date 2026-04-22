@@ -21,6 +21,29 @@ define( 'WP_FLOATING_CTA_OPTION', 'wp_floating_cta_settings' );
 require_once WP_FLOATING_CTA_DIR . 'admin/settings.php';
 
 /**
+ * 管理画面: 設定ページにのみ CSS・JS を読み込む
+ */
+add_action( 'admin_enqueue_scripts', 'wp_floating_cta_admin_enqueue' );
+function wp_floating_cta_admin_enqueue( string $hook ): void {
+    if ( $hook !== 'settings_page_wp-floating-cta' ) {
+        return;
+    }
+    wp_enqueue_style(
+        'wp-floating-cta',
+        WP_FLOATING_CTA_URL . 'assets/css/floating-cta.css',
+        [],
+        WP_FLOATING_CTA_VERSION
+    );
+    wp_enqueue_script(
+        'wp-floating-cta-admin',
+        WP_FLOATING_CTA_URL . 'assets/js/admin-preview.js',
+        [],
+        WP_FLOATING_CTA_VERSION,
+        true
+    );
+}
+
+/**
  * デフォルト設定値
  */
 function wp_floating_cta_defaults(): array {
@@ -43,6 +66,10 @@ function wp_floating_cta_defaults(): array {
         'max_width'            => '480',
         'shadow'               => '1',
         'animation'            => 'slide',
+        'button_animation'     => 'shine',
+        'bg_padding_v'         => '12',
+        'bg_padding_h'         => '16',
+        'full_width'           => '',
         'micro_top_color'      => '#333333',
         'micro_top_size'       => '13',
         'micro_bottom_color'   => '#666666',
@@ -125,8 +152,27 @@ function wp_floating_cta_render(): void {
     $target          = in_array( $s['button_target'], [ '_blank', '_self' ], true ) ? $s['button_target'] : '_blank';
     $rel             = ( $target === '_blank' ) ? ' rel="noopener noreferrer"' : '';
 
+    $valid_btn_anims = [ 'float', 'shine', 'pulse', 'none' ];
+    $btn_anim        = in_array( $s['button_animation'] ?? 'none', $valid_btn_anims, true )
+                           ? $s['button_animation'] : 'none';
+    $btn_anim_class  = ( $btn_anim !== 'none' ) ? ' fcta-btn-' . esc_attr( $btn_anim ) : '';
+
+    $full_width      = ! empty( $s['full_width'] );
+    $fullwidth_class = $full_width ? ' fcta-fullwidth' : '';
+
+    // フルワイドのときは位置・幅をすべて上書き
+    if ( $full_width ) {
+        $wrap_style = 'bottom:0;left:0;right:0;transform:none;max-width:100%;';
+    }
+
+    $wrap_style .= sprintf(
+        'padding:%spx %spx;',
+        (int) $s['bg_padding_v'],
+        (int) $s['bg_padding_h']
+    );
+
     ?>
-    <div id="wp-floating-cta" class="wp-floating-cta <?php echo esc_attr( $animation_class . $shadow_class ); ?>"
+    <div id="wp-floating-cta" class="wp-floating-cta <?php echo esc_attr( $animation_class . $shadow_class . $fullwidth_class ); ?>"
          style="<?php echo esc_attr( $wrap_style ); ?>"
          role="complementary" aria-label="CTAボタン">
 
@@ -142,7 +188,7 @@ function wp_floating_cta_render(): void {
 
         <a href="<?php echo esc_url( $s['button_url'] ); ?>"
            target="<?php echo esc_attr( $target ); ?>"<?php echo $rel; ?>
-           class="fcta-btn"
+           class="fcta-btn<?php echo esc_attr( $btn_anim_class ); ?>"
            style="<?php echo esc_attr( $btn_style ); ?>">
             <?php echo wp_kses_post( $s['button_text'] ); ?>
         </a>

@@ -9,20 +9,31 @@
     flex-direction: column;
     align-items: center;
     gap: 6px;
-    padding: 12px 16px;
     background: rgba(255, 255, 255, 0.96);
     border-radius: 12px;
     box-sizing: border-box;
     width: calc(100% - 32px);
-    /* bottom / max-width / position set inline */
+    /* bottom / max-width / position / padding set inline */
+}
+
+/* ── フルワイド ── */
+#wp-floating-cta.fcta-fullwidth {
+    left: 0 !important;
+    right: 0 !important;
+    transform: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    border-radius: 0 !important;
+    bottom: 0 !important;
 }
 
 /* ── シャドウ ── */
-#wp-floating-cta.fcta-shadow {
+#wp-floating-cta.fcta-shadow,
+#fcta-preview-widget.fcta-shadow {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.18);
 }
 
-/* ── アニメーション: スライドアップ ── */
+/* ── 登場アニメーション: スライドアップ ── */
 #wp-floating-cta.fcta-anim-slide {
     animation: fctaSlideUp 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -30,7 +41,6 @@
     from { opacity: 0; transform: translateY(40px); }
     to   { opacity: 1; transform: translateY(0); }
 }
-/* 中央配置のときは translateX を維持 */
 #wp-floating-cta.fcta-anim-slide[style*="translateX"] {
     animation: fctaSlideUpCenter 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -39,7 +49,7 @@
     to   { opacity: 1; transform: translateX(-50%) translateY(0); }
 }
 
-/* ── アニメーション: フェードイン ── */
+/* ── 登場アニメーション: フェードイン ── */
 #wp-floating-cta.fcta-anim-fade {
     animation: fctaFade 0.5s ease both;
 }
@@ -84,6 +94,7 @@
 /* ── ボタン本体 ── */
 .fcta-btn {
     display: inline-block;
+    position: relative;          /* shine の ::after に必要 */
     font-weight: bold;
     text-align: center;
     text-decoration: none;
@@ -105,9 +116,62 @@
     opacity: 1;
 }
 
+/* =============================================
+   ボタン 常時アニメーション
+   ============================================= */
+
+/* ── ふわふわ ── */
+.fcta-btn.fcta-btn-float {
+    animation: fctaBtnFloat 2.5s ease-in-out infinite;
+}
+@keyframes fctaBtnFloat {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-7px); }
+}
+.fcta-btn.fcta-btn-float:hover {
+    animation-play-state: paused;
+}
+
+/* ── きらり ── */
+.fcta-btn.fcta-btn-shine {
+    overflow: hidden;
+}
+.fcta-btn.fcta-btn-shine::after {
+    content: '';
+    position: absolute;
+    top: -20%;
+    left: -80%;
+    width: 40%;
+    height: 140%;
+    background: linear-gradient(
+        105deg,
+        transparent 30%,
+        rgba(255, 255, 255, 0.52) 50%,
+        transparent 70%
+    );
+    animation: fctaBtnShine 3s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes fctaBtnShine {
+    0%        { left: -80%; }
+    40%, 100% { left: 130%; }
+}
+
+/* ── ドキドキ ── */
+.fcta-btn.fcta-btn-pulse {
+    animation: fctaBtnPulse 1.8s ease-in-out infinite;
+}
+@keyframes fctaBtnPulse {
+    0%, 100% { transform: scale(1);    box-shadow: 0 0  0  0   rgba(0, 0, 0, 0.15); }
+    50%       { transform: scale(1.05); box-shadow: 0 6px 18px 0 rgba(0, 0, 0, 0.22); }
+}
+.fcta-btn.fcta-btn-pulse:hover {
+    animation-play-state: paused;
+}
+
 /* ── モバイル対応 ── */
 @media (max-width: 600px) {
-    #wp-floating-cta {
+    #wp-floating-cta:not(.fcta-fullwidth) {
         width: calc(100% - 24px);
         border-radius: 8px;
     }
