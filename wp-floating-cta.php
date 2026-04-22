@@ -223,24 +223,34 @@ function wp_floating_cta_render(): void {
         <button class="fcta-close" aria-label="閉じる" title="閉じる">&#x2715;</button>
         <?php endif; ?>
 
-        <?php if ( ! empty( trim( $s['micro_copy_top'] ) ) ) : ?>
-        <p class="fcta-micro fcta-micro-top" style="color:<?php echo esc_attr( $s['micro_top_color'] ); ?>;font-size:<?php echo (int) $s['micro_top_size']; ?>px;">
-            <?php echo wp_kses_post( $s['micro_copy_top'] ); ?>
-        </p>
-        <?php endif; ?>
+        <?php
+        // フルワイド時: 内側コンテンツを max-width で中央揃え
+        $inner_style = $full_width
+            ? sprintf( 'max-width:%spx;width:100%;margin:0 auto;', (int) $s['max_width'] )
+            : '';
+        ?>
+        <div class="fcta-inner"<?php echo $inner_style ? ' style="' . esc_attr( $inner_style ) . '"' : ''; ?>>
 
-        <a href="<?php echo esc_url( $s['button_url'] ); ?>"
-           target="<?php echo esc_attr( $target ); ?>"<?php echo $rel; ?>
-           class="fcta-btn<?php echo esc_attr( $btn_anim_class . $btn_3d_class ); ?>"
-           style="<?php echo esc_attr( $btn_style ); ?>">
-            <?php echo wp_kses_post( $s['button_text'] ); ?>
-        </a>
+            <?php if ( ! empty( trim( $s['micro_copy_top'] ) ) ) : ?>
+            <p class="fcta-micro fcta-micro-top" style="color:<?php echo esc_attr( $s['micro_top_color'] ); ?>;font-size:<?php echo (int) $s['micro_top_size']; ?>px;">
+                <?php echo wp_kses_post( $s['micro_copy_top'] ); ?>
+            </p>
+            <?php endif; ?>
 
-        <?php if ( ! empty( trim( $s['micro_copy_bottom'] ) ) ) : ?>
-        <p class="fcta-micro fcta-micro-bottom" style="color:<?php echo esc_attr( $s['micro_bottom_color'] ); ?>;font-size:<?php echo (int) $s['micro_bottom_size']; ?>px;">
-            <?php echo wp_kses_post( $s['micro_copy_bottom'] ); ?>
-        </p>
-        <?php endif; ?>
+            <a href="<?php echo esc_url( $s['button_url'] ); ?>"
+               target="<?php echo esc_attr( $target ); ?>"<?php echo $rel; ?>
+               class="fcta-btn<?php echo esc_attr( $btn_anim_class . $btn_3d_class ); ?>"
+               style="<?php echo esc_attr( $btn_style ); ?>">
+                <?php echo wp_kses_post( $s['button_text'] ); ?>
+            </a>
+
+            <?php if ( ! empty( trim( $s['micro_copy_bottom'] ) ) ) : ?>
+            <p class="fcta-micro fcta-micro-bottom" style="color:<?php echo esc_attr( $s['micro_bottom_color'] ); ?>;font-size:<?php echo (int) $s['micro_bottom_size']; ?>px;">
+                <?php echo wp_kses_post( $s['micro_copy_bottom'] ); ?>
+            </p>
+            <?php endif; ?>
+
+        </div>
     </div>
     <?php
 }

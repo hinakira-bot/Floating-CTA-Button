@@ -152,18 +152,23 @@ function wp_floating_cta_settings_page(): void {
                         <button type="button" class="fcta-close"
                                 style="<?php echo $s['show_close'] ? '' : 'display:none;'; ?>">&#x2715;</button>
 
-                        <p class="fcta-micro fcta-micro-top" id="fcta-prev-micro-top"
-                           style="color:<?php echo esc_attr($s['micro_top_color']); ?>;font-size:<?php echo (int)$s['micro_top_size']; ?>px;<?php echo trim($s['micro_copy_top'])==='' ? 'display:none;' : ''; ?>">
-                            <?php echo esc_html( $s['micro_copy_top'] ); ?></p>
+                        <div class="fcta-inner" id="fcta-prev-inner"
+                             style="<?php echo $s['full_width'] ? 'max-width:' . (int)$s['max_width'] . 'px;width:100%;margin:0 auto;' : ''; ?>">
 
-                        <span id="fcta-prev-btn"
-                              class="fcta-btn<?php echo esc_attr( $prev_btn_anim . $prev_3d ); ?>"
-                              style="background-color:<?php echo esc_attr($s['bg_color']); ?>;color:<?php echo esc_attr($s['text_color']); ?>;border-radius:<?php echo (int)$s['border_radius']; ?>px;font-size:<?php echo (int)$s['font_size']; ?>px;padding:<?php echo (int)$s['padding_v']; ?>px <?php echo (int)$s['padding_h']; ?>px;cursor:default;">
-                            <?php echo esc_html( $s['button_text'] ); ?></span>
+                            <p class="fcta-micro fcta-micro-top" id="fcta-prev-micro-top"
+                               style="color:<?php echo esc_attr($s['micro_top_color']); ?>;font-size:<?php echo (int)$s['micro_top_size']; ?>px;<?php echo trim($s['micro_copy_top'])==='' ? 'display:none;' : ''; ?>">
+                                <?php echo esc_html( $s['micro_copy_top'] ); ?></p>
 
-                        <p class="fcta-micro fcta-micro-bottom" id="fcta-prev-micro-bot"
-                           style="color:<?php echo esc_attr($s['micro_bottom_color']); ?>;font-size:<?php echo (int)$s['micro_bottom_size']; ?>px;<?php echo trim($s['micro_copy_bottom'])==='' ? 'display:none;' : ''; ?>">
-                            <?php echo esc_html( $s['micro_copy_bottom'] ); ?></p>
+                            <span id="fcta-prev-btn"
+                                  class="fcta-btn<?php echo esc_attr( $prev_btn_anim . $prev_3d ); ?>"
+                                  style="background-color:<?php echo esc_attr($s['bg_color']); ?>;color:<?php echo esc_attr($s['text_color']); ?>;border-radius:<?php echo (int)$s['border_radius']; ?>px;font-size:<?php echo (int)$s['font_size']; ?>px;padding:<?php echo (int)$s['padding_v']; ?>px <?php echo (int)$s['padding_h']; ?>px;cursor:default;">
+                                <?php echo esc_html( $s['button_text'] ); ?></span>
+
+                            <p class="fcta-micro fcta-micro-bottom" id="fcta-prev-micro-bot"
+                               style="color:<?php echo esc_attr($s['micro_bottom_color']); ?>;font-size:<?php echo (int)$s['micro_bottom_size']; ?>px;<?php echo trim($s['micro_copy_bottom'])==='' ? 'display:none;' : ''; ?>">
+                                <?php echo esc_html( $s['micro_copy_bottom'] ); ?></p>
+
+                        </div>
                     </div>
                 </div>
                 <p class="description" style="margin-top:8px;font-size:11px;">

@@ -20,14 +20,28 @@
         var closeEl = widget ? widget.querySelector( '.fcta-close' ) : null;
         if ( ! widget || ! btn ) return;
 
-        /* ── ウィジェット最大幅（PCモード時は設定に従う） ── */
+        /* ── ウィジェット最大幅 ── */
         var fullW = field( 'full_width' );
+        var maxW  = field( 'max_width' ) || '480';
+        var inner = document.getElementById( 'fcta-prev-inner' );
+
         if ( fullW ) {
+            // パネル: 全幅、内側コンテンツ: max-width で中央揃え
             widget.classList.add( 'fcta-fullwidth' );
             widget.style.maxWidth = '100%';
+            if ( inner ) {
+                inner.style.maxWidth = ( isMobile ? '100%' : maxW + 'px' );
+                inner.style.width    = '100%';
+                inner.style.margin   = '0 auto';
+            }
         } else {
             widget.classList.remove( 'fcta-fullwidth' );
-            widget.style.maxWidth = isMobile ? '100%' : ( ( field( 'max_width' ) || '480' ) + 'px' );
+            widget.style.maxWidth = isMobile ? '100%' : ( maxW + 'px' );
+            if ( inner ) {
+                inner.style.maxWidth = '';
+                inner.style.width    = '';
+                inner.style.margin   = '';
+            }
         }
 
         /* ── ボタンスタイル（PC / モバイル切り替え対応） ── */
